@@ -28,7 +28,10 @@ class HistoryProvider extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 500));
       _apiHistory = [
         {"sender": "user", "message": "What is Flutter?"},
-        {"sender": "assistant", "message": "Flutter is an open-source UI toolkit by Google."},
+        {
+          "sender": "assistant",
+          "message": "Flutter is an open-source UI toolkit by Google."
+        },
       ];
     } catch (e) {
       error = "Failed to load history";

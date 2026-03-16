@@ -22,7 +22,8 @@ class ChatProvider extends ChangeNotifier {
     try {
       // Simulate API call since dummy API endpoint may not exist
       await Future.delayed(const Duration(seconds: 1));
-      String reply = "Flutter state management helps manage UI efficiently. This is a simulated response.";
+      String reply =
+          "Flutter state management helps manage UI efficiently. This is a simulated response.";
       messages.add(ChatMessage(sender: "assistant", message: reply));
 
       // Save to history
