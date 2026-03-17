@@ -11,11 +11,10 @@ class HistoryProvider extends ChangeNotifier {
   String? error;
 
   List<Map<String, String>> get history {
-    // Combine API and local history
-    return [
-      ..._apiHistory,
-      ...box.values.map((e) => Map<String, String>.from(json.decode(e)))
-    ];
+    final local = box.values
+        .map((e) => Map<String, String>.from(json.decode(e)))
+        .toList();
+    return [..._apiHistory, ...local];
   }
 
   Future<void> fetchHistory() async {
@@ -24,17 +23,17 @@ class HistoryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(milliseconds: 500));
-      _apiHistory = [
-        {"sender": "user", "message": "What is Flutter?"},
-        {
-          "sender": "assistant",
-          "message": "Flutter is an open-source UI toolkit by Google."
-        },
-      ];
-    } catch (e) {
-      error = "Failed to load history";
+      final response = await ApiService.getChatHistory();
+      final List<dynamic> rawData = response['data'] ?? [];
+
+      _apiHistory = rawData
+          .map<Map<String, String>>((e) => {
+                'sender': e['sender']?.toString() ?? '',
+                'message': e['message']?.toString() ?? '',
+              })
+          .toList();
+    } catch (_) {
+      _apiHistory = [];
     } finally {
       isLoading = false;
       notifyListeners();

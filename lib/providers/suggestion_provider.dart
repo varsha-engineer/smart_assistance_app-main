@@ -19,13 +19,11 @@ class SuggestionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await repository.fetchSuggestions(page);
-      if (data.isEmpty) {
-        hasMore = false;
-      } else {
-        suggestions.addAll(data);
-        page++;
-      }
+      final (data, hasNext) = await repository.fetchSuggestions(page);
+
+      suggestions.addAll(data);
+      hasMore = hasNext;
+      if (data.isNotEmpty) page++;
     } catch (e) {
       error = "Failed to load suggestions";
     } finally {
