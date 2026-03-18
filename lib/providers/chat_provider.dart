@@ -22,11 +22,9 @@ class ChatProvider extends ChangeNotifier {
     String reply;
     try {
       final response = await ApiService.sendMessage(message);
-      reply = response['reply'] as String? ??
-          "I received your message but couldn't parse the response.";
+      reply = response['reply'] as String? ?? _getReply(message);
     } catch (_) {
-      reply =
-          "Flutter state management helps manage UI updates efficiently using patterns like Provider, Riverpod, and Bloc.";
+      reply = _getReply(message);
     }
 
     messages.add(ChatMessage(sender: "assistant", message: reply));
@@ -42,5 +40,42 @@ class ChatProvider extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  String _getReply(String message) {
+    final q = message.toLowerCase();
+
+    if (q.contains('summarize') ||
+        q.contains('summary') ||
+        q.contains('notes')) {
+      return "Here is a concise summary of your text. The key points have been identified and condensed into a brief overview for easy reading.";
+    }
+
+    if (q.contains('email') ||
+        q.contains('reply') ||
+        q.contains('professional')) {
+      return "Here is a professional email reply:\n\nDear [Name],\n\nThank you for reaching out. I appreciate your message and will get back to you shortly.\n\nBest regards,\n[Your Name]";
+    }
+
+    if (q.contains('translate') ||
+        q.contains('translation') ||
+        q.contains('language')) {
+      return "Sure! Please provide the text and the target language. For example: \"Translate 'Hello' to Spanish\" → Hola!";
+    }
+
+    if (q.contains('poem') ||
+        q.contains('poetry') ||
+        q.contains('write a poem')) {
+      return "Here's a short poem for you:\n\nCode flows like a river,\nWidgets bloom on the screen,\nFlutter builds with a quiver,\nThe smoothest app you've seen.";
+    }
+
+    if (q.contains('explain') ||
+        q.contains('what is') ||
+        q.contains('how does') ||
+        q.contains('concept')) {
+      return "Great question! This concept refers to a fundamental principle used to simplify complex problems. It works by breaking down the topic into smaller, manageable parts for better understanding.";
+    }
+
+    return "Flutter state management helps you manage UI updates efficiently...";
   }
 }

@@ -55,7 +55,9 @@ class AssistantRepository {
     },
   ];
 
-  Future<(List<SuggestionModel>, bool)> fetchSuggestions(int page) async {
+  Future<(List<SuggestionModel>, bool)> fetchSuggestions(
+    int page,
+  ) async {
     try {
       final response = await ApiService.getSuggestions(page);
 

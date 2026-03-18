@@ -40,6 +40,12 @@ class HistoryProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> clearHistory() async {
+    await box.clear(); // clear local storage
+    _apiHistory.clear(); // clear API data
+    notifyListeners();
+  }
+
   void saveMessage(Map<String, String> message) {
     box.add(json.encode(message));
     notifyListeners();

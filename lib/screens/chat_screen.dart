@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/chat_bubble.dart';
@@ -48,6 +49,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   void _sendMessage(ChatProvider provider) {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
+
     provider.sendMessage(text, context);
     _controller.clear();
     _scrollToBottom();
@@ -118,10 +120,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 color: isDark ? Colors.white10 : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                Icons.history_rounded,
-                color: isDark ? Colors.white70 : Colors.grey.shade700,
-                size: 20,
+              child: Tooltip(
+                message: "Chat History",
+                child: Icon(
+                  Icons.history_rounded,
+                  color: isDark ? Colors.white70 : Colors.grey.shade700,
+                  size: 20,
+                ),
               ),
             ),
             onPressed: () => Navigator.push(
@@ -328,25 +333,43 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   color: isDark ? Colors.white10 : Colors.grey.shade200,
                 ),
               ),
-              child: TextField(
-                controller: _controller,
-                maxLines: null,
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-                decoration: InputDecoration(
-                  hintText: "Type a message...",
-                  hintStyle: TextStyle(
-                    color: isDark ? Colors.white38 : Colors.grey.shade400,
+              child: RawKeyboardListener(
+                focusNode: FocusNode(),
+                onKey: (event) {
+                  if (event is RawKeyDownEvent) {
+                    if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (event.isShiftPressed) {
+                        // Allow new line
+                        return;
+                      } else {
+                        _sendMessage(provider);
+                      }
+                    }
+                  }
+                },
+                child: TextField(
+                  controller: _controller,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.send, // ✅ IMPORTANT
+                  style:
+                      TextStyle(color: isDark ? Colors.white : Colors.black87),
+                  decoration: InputDecoration(
+                    hintText: "Type a message...",
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.white38 : Colors.grey.shade400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    prefixIcon: Icon(
+                      Icons.message_outlined,
+                      color: isDark ? Colors.white30 : Colors.grey.shade400,
+                      size: 20,
+                    ),
                   ),
-                  border: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  prefixIcon: Icon(
-                    Icons.message_outlined,
-                    color: isDark ? Colors.white30 : Colors.grey.shade400,
-                    size: 20,
-                  ),
+                  // onSubmitted: (_) => _sendMessage(provider),
                 ),
-                onSubmitted: (_) => _sendMessage(provider),
               ),
             ),
           ),

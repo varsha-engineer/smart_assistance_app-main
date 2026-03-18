@@ -307,7 +307,10 @@ class _HistoryScreenState extends State<HistoryScreen>
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () {
+              context.read<HistoryProvider>().clearHistory();
+              Navigator.pop(ctx);
+            },
             child: Text("Clear", style: TextStyle(color: Colors.red.shade400)),
           ),
         ],
