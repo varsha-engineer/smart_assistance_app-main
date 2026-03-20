@@ -42,6 +42,12 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearMessages() {
+    messages.clear();
+    error = null;
+    notifyListeners();
+  }
+
   String _getReply(String message) {
     final q = message.toLowerCase();
 
